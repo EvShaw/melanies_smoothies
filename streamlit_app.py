@@ -11,6 +11,16 @@ st.write(
     """
 )
 
+# Initialize connection.
+conn = st.connection("snowflake")
+
+# Perform query.
+df = conn.query("SELECT * from SMOOTHIES;", ttl=600)
+
+# Print results.
+for row in df.itertuples():
+    st.write(f"{row.NAME} has a :{row.PET}:")
+
 
 name_on_order = st.text_input("Name on Smoothie:")
 st.write("The name on your Smoothie will be: ", name_on_order)
