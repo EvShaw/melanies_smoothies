@@ -1,6 +1,7 @@
 import streamlit as st
 from snowflake.connector import connect
-from snowflake.snowpark.context import get_active_session
+from snowflake.snowpark import Session
+from snowflake.snowpark.functions import col
 import pandas as pd
 import requests
 
@@ -17,9 +18,9 @@ st.write(
 )
 name_on_order = st.text_input("Name on Smoothie:")
 st.write("The name on your Smoothie will be: ", name_on_order)
-# Retrieve Snowflake connection details from Streamlit secrets
+
 snowflake_secrets = st.secrets["snowflake"]
-# Establish a connection to Snowflake
+
 conn = connect(
     user=snowflake_secrets["user"],
     password=snowflake_secrets["password"],
@@ -35,7 +36,9 @@ conn = connect(
 query = "SELECT FRUIT_NAME FROM smoothies.public.fruit_options"
 fruit_options_df = pd.read_sql(query, conn)
 
+session = Session.builder.configs(conn).create()
 session = get_active_session()
+
 my_dataframe = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
 st.dataframe( data = my_dataframe, use_container_width = True)
 st.stop()
