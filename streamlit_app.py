@@ -45,7 +45,7 @@ if ingredients_list:
     """
 
     for fruit_chosen in ingredients_list:
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+        fruityvice_response = requests.get(f"https://fruityvice.com/api/fruit/{fruit_chosen}")
 
 
         if fruityvice_response.status_code == 200:
