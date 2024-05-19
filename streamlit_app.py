@@ -50,4 +50,7 @@ if ingredients_list:
         conn.cursor().execute(insert_stmt)
         st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
 # Close the connection
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+st.text(fruityvice_response)
+
 conn.close()
