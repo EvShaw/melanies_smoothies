@@ -37,7 +37,7 @@ ingredients_list = st.multiselect(
 )
 
 if ingredients_list:
-    ingredients_string = ', '.join(ingredients_list)
+    # ingredients_string = ', '.join(ingredients_list)
 
     insert_stmt = f"""
     INSERT INTO smoothies.public.orders (ingredients, name_on_order)
@@ -45,11 +45,11 @@ if ingredients_list:
     """
 
     for fruit_chosen in ingredients_list:
-        fruityvice_response = requests.get(f"https://fruityvice.com/api/fruit/{fruit_chosen}")
-
+        ingredients_string = fruit_chosen + ' '
+        st.subheader(fruit_chosen + ' Nutrition Information')
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + {fruit_chosen})
 
         if fruityvice_response.status_code == 200:
-        
             response_json = fruityvice_response.json()
             
             # Normalize the JSON data (flattening nested structures if necessary)
@@ -57,6 +57,7 @@ if ingredients_list:
             
             # Display the DataFrame using Streamlit
             st.dataframe(fv_df, use_container_width=True)
+            
         else:
             st.error(f"Error fetching data: {fruityvice_response.status_code}")
         
