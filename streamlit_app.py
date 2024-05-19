@@ -2,6 +2,7 @@ import streamlit as st
 from snowflake.connector import connect
 import pandas as pd
 import requests
+import json
 
 # Write directly to the app
 st.title("Example Streamlit App :balloon:")
