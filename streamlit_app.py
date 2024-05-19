@@ -45,10 +45,10 @@ session = Session.builder.configs({
     "schema": snowflake_secrets["schema"]
 }).create()
 
-query = "SELECT FRUIT_NAME FROM smoothies.public.fruit_options"
+query = "SELECT FRUIT_NAME FROM SMOOTHIES.PUBLIC.FRUIT_OPTIONS"
 fruit_options_df = pd.read_sql(query, conn)
 
-my_dataframe = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
+my_dataframe = session.table('SMOOTHIES.PUBLIC.FRUIT_OPTIONS').select(col('FRUIT_NAME'), col('SEARCH_ON'))
 
 # st.dataframe(data=my_dataframe.collect(), use_container_width=True)
 pd_df = my_dataframe.to_pandas()
