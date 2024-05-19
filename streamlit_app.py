@@ -36,6 +36,8 @@ ingredients_list = st.multiselect(
     max_selections=5
 )
 
+session = get_active_session()
+
 my_dataframe = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
 # st.dataframe( data = my_dataframe, use_container_width = True)
 # st.stop()
@@ -43,39 +45,44 @@ pd_df = my_dataframe.to_pandas()
 st.dataframe(pd_df)
 st.stop()
 
-if ingredients_list:
-    ingredients_string = ', '.join(ingredients_list)
+ingredients_list = st.multiselect(
+    'Choose up to 5 ingredients:'
+    ,my_dataframe
+)
 
-    insert_stmt = f"""
-    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-    VALUES (%s, %s)
-    """
+# if ingredients_list:
+#     ingredients_string = ', '.join(ingredients_list)
 
-    for fruit_chosen in ingredients_list:
-        st.subheader(f'{fruit_chosen} Nutrition Information')
-        fruityvice_url = f"https://fruityvice.com/api/fruit/{fruit_chosen}"
-        st.write(f"Requesting URL: {fruityvice_url}")  # Debugging: Display the URL being requested
+#     insert_stmt = f"""
+#     INSERT INTO smoothies.public.orders (ingredients, name_on_order)
+#     VALUES (%s, %s)
+#     """
 
-        fruityvice_response = requests.get(fruityvice_url)
+#     for fruit_chosen in ingredients_list:
+#         st.subheader(f'{fruit_chosen} Nutrition Information')
+#         fruityvice_url = f"https://fruityvice.com/api/fruit/{fruit_chosen}"
+#         st.write(f"Requesting URL: {fruityvice_url}")  # Debugging: Display the URL being requested
 
-        if fruityvice_response.status_code == 200:
-            response_json = fruityvice_response.json()
+#         fruityvice_response = requests.get(fruityvice_url)
+
+#         if fruityvice_response.status_code == 200:
+#             response_json = fruityvice_response.json()
             
-            # Normalize the JSON data (flattening nested structures if necessary)
-            fv_df = pd.json_normalize(response_json)
+#             # Normalize the JSON data (flattening nested structures if necessary)
+#             fv_df = pd.json_normalize(response_json)
             
-            # Display the DataFrame using Streamlit
-            st.dataframe(fv_df, use_container_width=True)
+#             # Display the DataFrame using Streamlit
+#             st.dataframe(fv_df, use_container_width=True)
             
-        elif fruityvice_response.status_code == 404:
-            st.error(f"No data found for {fruit_chosen}. Please check the fruit name.")
-        else:
-            st.error(f"Error fetching data: {fruityvice_response.status_code}")
+#         elif fruityvice_response.status_code == 404:
+#             st.error(f"No data found for {fruit_chosen}. Please check the fruit name.")
+#         else:
+#             st.error(f"Error fetching data: {fruityvice_response.status_code}")
         
     
-    if st.button('Submit Order'):
-        conn.cursor().execute(insert_stmt, (ingredients_string, name_on_order))
-        st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
+#     if st.button('Submit Order'):
+#         conn.cursor().execute(insert_stmt, (ingredients_string, name_on_order))
+#         st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
 
 conn.close()
 
