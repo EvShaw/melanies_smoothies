@@ -46,9 +46,8 @@ if ingredients_list:
     """
 
     for fruit_chosen in ingredients_list:
-        ingredients_string = fruit_chosen + ' '
-        st.subheader(fruit_chosen + ' Nutrition Information')
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + {fruit_chosen})
+        st.subheader(f'{fruit_chosen} Nutrition Information')
+        fruityvice_response = requests.get(f"https://fruityvice.com/api/fruit/{fruit_chosen}")
 
         if fruityvice_response.status_code == 200:
             response_json = fruityvice_response.json()
