@@ -1,5 +1,6 @@
 import streamlit as st
 from snowflake.connector import connect
+from snowflake.snowpark.context import get_active_session
 import pandas as pd
 import requests
 
@@ -34,6 +35,7 @@ conn = connect(
 query = "SELECT FRUIT_NAME FROM smoothies.public.fruit_options"
 fruit_options_df = pd.read_sql(query, conn)
 
+session = get_active_session()
 my_dataframe = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
 st.dataframe( data = my_dataframe, use_container_width = True)
 st.stop()
