@@ -58,5 +58,14 @@ if ingredients_list:
 # Close the connection
 conn.close()
 
+# fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+# fv_df = st.text(data = fruityvice_response.json(), use_container_width = True)
+# Fetch data from the API
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-fv_df = st.text(data = fruityvice_response.json(), use_container_width = True)
+
+# Convert the JSON response to a formatted string
+response_json = fruityvice_response.json()
+response_str = json.dumps(response_json, indent=2)
+
+# Display the JSON string using Streamlit
+st.text(response_str)
