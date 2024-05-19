@@ -66,10 +66,10 @@ if ingredients_list:
     # ingredients_string = ', '.join(ingredients_list)
     ingredients_string = ''
 
-    # insert_stmt = f"""
-    # INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-    # VALUES (%s, %s)
-    # """
+    insert_stmt = f"""
+    INSERT INTO SMOOTHIES.PUBLIC.ORDERS (ingredients_string, name_on_order)
+    VALUES (?, ?)
+    """
 
     for fruit_chosen in ingredients_list:
         ingredients_string += fruit_chosen + ' '
