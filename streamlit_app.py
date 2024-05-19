@@ -1,23 +1,24 @@
-import streamlit as st
+mport streamlit as st
 from snowflake.connector import connect
-from snowflake.snowpark.context import get_active_session
-from snowflake.snowpark.functions import col
 import pandas as pd
 import requests
-import json
 
+
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+st.text(fruityvice_response)
+
+# Write directly to the app
 st.title("Example Streamlit App :balloon:")
 st.write(
     """
     Choose your Fruits!
     """
 )
-
 name_on_order = st.text_input("Name on Smoothie:")
 st.write("The name on your Smoothie will be: ", name_on_order)
-
+# Retrieve Snowflake connection details from Streamlit secrets
 snowflake_secrets = st.secrets["snowflake"]
-
+# Establish a connection to Snowflake
 conn = connect(
     user=snowflake_secrets["user"],
     password=snowflake_secrets["password"],
@@ -28,63 +29,25 @@ conn = connect(
     schema=snowflake_secrets["schema"],
     client_session_keep_alive=snowflake_secrets["client_session_keep_alive"]
 )
-
+# Query data from Snowflake
 query = "SELECT FRUIT_NAME FROM smoothies.public.fruit_options"
 fruit_options_df = pd.read_sql(query, conn)
-
+# Display the available fruit options
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
     fruit_options_df['FRUIT_NAME'].tolist(),
     max_selections=5
 )
-
-session = get_active_session()
-
-my_dataframe = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
-# st.dataframe( data = my_dataframe, use_container_width = True)
-# st.stop()
-pd_df = my_dataframe.to_pandas()
-st.dataframe(pd_df)
-st.stop()
-
-ingredients_list = st.multiselect(
-    'Choose up to 5 ingredients:'
-    ,my_dataframe
-)
-
-# if ingredients_list:
-#     ingredients_string = ', '.join(ingredients_list)
-
-#     insert_stmt = f"""
-#     INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-#     VALUES (%s, %s)
-#     """
-
-#     for fruit_chosen in ingredients_list:
-#         st.subheader(f'{fruit_chosen} Nutrition Information')
-#         fruityvice_url = f"https://fruityvice.com/api/fruit/{fruit_chosen}"
-#         st.write(f"Requesting URL: {fruityvice_url}")  # Debugging: Display the URL being requested
-
-#         fruityvice_response = requests.get(fruityvice_url)
-
-#         if fruityvice_response.status_code == 200:
-#             response_json = fruityvice_response.json()
-            
-#             # Normalize the JSON data (flattening nested structures if necessary)
-#             fv_df = pd.json_normalize(response_json)
-            
-#             # Display the DataFrame using Streamlit
-#             st.dataframe(fv_df, use_container_width=True)
-            
-#         elif fruityvice_response.status_code == 404:
-#             st.error(f"No data found for {fruit_chosen}. Please check the fruit name.")
-#         else:
-#             st.error(f"Error fetching data: {fruityvice_response.status_code}")
-        
-    
-#     if st.button('Submit Order'):
-#         conn.cursor().execute(insert_stmt, (ingredients_string, name_on_order))
-#         st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
-
+if ingredients_list:
+    ingredients_string = ', '.join(ingredients_list)
+    # Prepare the SQL insert statement
+    insert_stmt = f"""
+    INSERT INTO smoothies.public.orders (ingredients, name_on_order)
+    VALUES ('{ingredients_string}', '{name_on_order}')
+    """
+    # Button to submit the order
+    if st.button('Submit Order'):
+        conn.cursor().execute(insert_stmt)
+        st.success(f'Your Smoothie is ordered, {name_on_order}!', icon="✅")
+# Close the connection
 conn.close()
-
