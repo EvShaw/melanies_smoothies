@@ -68,7 +68,7 @@ if ingredients_list:
 
     insert_stmt = f"""
     INSERT INTO SMOOTHIES.PUBLIC.ORDERS (ingredients_string, name_on_order)
-    VALUES (?, ?)
+    VALUES (%s, %s)
     """
 
     for fruit_chosen in ingredients_list:
