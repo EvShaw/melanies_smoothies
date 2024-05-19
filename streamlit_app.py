@@ -1,4 +1,4 @@
-mport streamlit as st
+import streamlit as st
 from snowflake.connector import connect
 import pandas as pd
 import requests
