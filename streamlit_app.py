@@ -1,6 +1,11 @@
 import streamlit as st
 from snowflake.connector import connect
 import pandas as pd
+import requests
+
+
+fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+st.text(fruityvice_response)
 
 # Write directly to the app
 st.title("Example Streamlit App :balloon:")
