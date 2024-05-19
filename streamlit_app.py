@@ -61,11 +61,18 @@ conn.close()
 # fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
 # fv_df = st.text(data = fruityvice_response.json(), use_container_width = True)
 # Fetch data from the API
+# Fetch data from the API
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
 
-# Convert the JSON response to a formatted string
-response_json = fruityvice_response.json()
-response_str = json.dumps(response_json, indent=2)
-
-# Display the JSON string using Streamlit
-st.text(response_str)
+# Check if the request was successful
+if fruityvice_response.status_code == 200:
+    # Parse the JSON response
+    response_json = fruityvice_response.json()
+    
+    # Normalize the JSON data (flattening nested structures if necessary)
+    fv_df = pd.json_normalize(response_json)
+    
+    # Display the DataFrame using Streamlit
+    st.dataframe(fv_df, use_container_width=True)
+else:
+    st.error(f"Error fetching data: {fruityvice_response.status_code}")
