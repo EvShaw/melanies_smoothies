@@ -29,15 +29,21 @@ conn = connect(
     schema=snowflake_secrets["schema"],
     client_session_keep_alive=snowflake_secrets["client_session_keep_alive"]
 )
-# Query data from Snowflake
+
+
 query = "SELECT FRUIT_NAME FROM smoothies.public.fruit_options"
 fruit_options_df = pd.read_sql(query, conn)
-# Display the available fruit options
+
+my_dataframe = session.table('smoothies.public.fruit_options').select(col('FRUIT_NAME'), col('SEARCH_ON'))
+st.dataframe( data = my_dataframe, use_container_width = True)
+st.stop()
+                                                                                                            
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients:',
     fruit_options_df['FRUIT_NAME'].tolist(),
     max_selections=5
 )
+
 if ingredients_list:
     # ingredients_string = ', '.join(ingredients_list)
     ingredients_string = ''
