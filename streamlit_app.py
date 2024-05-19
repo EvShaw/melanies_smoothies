@@ -37,6 +37,7 @@ ingredients_list = st.multiselect(
 )
 
 if ingredients_list:
+    ingredients_string = ''
     # ingredients_string = ', '.join(ingredients_list)
 
     insert_stmt = f"""
